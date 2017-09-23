@@ -69,8 +69,7 @@ class ReachCLI (
   def processPapers (threadLimit: Option[Int], withAssembly: Boolean): Int = {
     logger.info("Initializing Reach ...")
 
-    val _ = PaperReader.rs.extractFrom("Blah", "", "")
-    // val files = papersDir.listFilesByRegex(pattern = """.*\.(nxml|csv|tsv)$""", caseSensitive = false, recursive = true).toVector.par
+    val _ = PaperReader.reachSystem.extractFrom("Blah", "", "")
     val files = papersDir.listFilesByRegex(pattern=ReachInputFilePattern, caseSensitive=false, recursive=true).toVector.par
 
     // limit parallelization

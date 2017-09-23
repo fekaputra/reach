@@ -242,6 +242,7 @@ class ReachSystem(
 
 }
 
+
 object ReachSystem extends LazyLogging {
 
   /** This function should set the right displayMention for each mention.

@@ -55,7 +55,7 @@ object TestUtils {
     new File(url.toURI)
   }
 
-  val testReach = PaperReader.rs // All tests should use this system!
+  val testReach = PaperReader.reachSystem // All tests should use this system!
   val testReader = new NxmlReader
   val bioproc = testReach.processor // quick access to a processor, if needed.
   val docId = "testdoc"

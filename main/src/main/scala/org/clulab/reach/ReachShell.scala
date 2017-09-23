@@ -23,9 +23,9 @@ object ReachShell extends App {
   val contextEngineParams: Map[String, String] = context.createContextEngineParams(contextConfig)
 
   // initialize ReachSystem with appropriate context engine
-  var reach = new ReachSystem(pcc = Some(new ProcessorCoreClient),
-                              contextEngineType = contextEngineType,
-                              contextParams = contextEngineParams)
+  var reachSystem = new ReachSystem(pcc = Some(new ProcessorCoreClient),
+                                    contextEngineType = contextEngineType,
+                                    contextParams = contextEngineParams)
 
   val history = new FileHistory(new File(System.getProperty("user.home"), ".reachshellhistory"))
   sys addShutdownHook {
@@ -63,14 +63,14 @@ object ReachShell extends App {
         println("reloading rules ...")
         try {
           val rules = reload()
-          reach = new ReachSystem(Some(rules), Some(proc))
+          reachSystem = new ReachSystem(rules = Some(rules), pcc = Some(new ProcessorCoreClient))
           println("successfully reloaded rules")
         } catch {
           case e: Throwable => println(s"error reloading: ${e.getMessage}")
         }*/
 
       //case ":entityrules" =>
-        //println(reach.entityRules)
+        //println(reachSystem.entityRules)
         //  TODO: add rule attribute to extractors
 
       //case ":modrules" =>
@@ -80,8 +80,8 @@ object ReachShell extends App {
       //  TODO: add rule attribute to extractors*/
 
       case text =>
-        val doc = reach.mkDoc(text, "rulershell")
-        val mentions = reach.extractFrom(doc)
+        val doc = reachSystem.mkDoc(text, "rulershell")
+        val mentions = reachSystem.extractFrom(doc)
         displayMentions(mentions, doc)
     }
   }
@@ -91,15 +91,12 @@ object ReachShell extends App {
   reader.shutdown()
 
 
-  // functions
-
   def printCommands(): Unit = {
     println("\nCOMMANDS:")
-    val longest = commands.keys.toSeq.sortBy(_.length).last.length 
+    val longest = commands.keys.toSeq.sortBy(_.length).last.length
     for ((cmd, msg) <- commands)
       println(s"\t$cmd${"\t"*(1 + (longest - cmd.length)/4)}=> $msg")
     println("")
   }
 
 }
-
