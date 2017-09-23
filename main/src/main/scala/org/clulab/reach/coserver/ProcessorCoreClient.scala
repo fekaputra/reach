@@ -18,25 +18,21 @@ import org.clulab.processors.coserver.ProcessorCoreServerMessages._
 /**
   * Reach client for the Processors Core Server.
   *   Written by: Tom Hicks. 6/9/2017.
-  *   Last Modified: Update for removal of semantic roles.
+  *   Last Modified: Replace user-specified timeout, simulate blocking.
   */
 class ProcessorCoreClient extends LazyLogging {
 
   // load application configuration from the configuration file
   private val config = ConfigFactory.load().getConfig("ProcessorCoreClient")
 
-  // read acter system name from the configuration file
+  // // read actor system name from the configuration file
   // private val systemName = if (config.hasPath("server.systemName"))
   //                            config.getString("server.systemName")
   //                          else "procCoreServer"
-
-  // fire up the actor system
+  //
+  // // fire up the actor system
   // private val system = ActorSystem(systemName)
   // logger.debug(s"system=${system}")
-
-  // figure out a good timeout value for requests to the server
-  private val patience = if (config.hasPath("askTimeout")) config.getInt("askTimeout") else 180
-  implicit val timeout = Timeout(patience seconds)
 
   // fire up the processor core server and get a ref to the message router
   // val router: ActorRef = getRouterRef(config)
@@ -48,13 +44,16 @@ class ProcessorCoreClient extends LazyLogging {
   //   val serverPath = if (config.hasPath("server.path")) config.getString("server.path")
   //                    else s"akka://${systemName}/user/procActorPool"
   //   val ref = system.actorSelection(ActorPath.fromString(serverPath)).resolveOne()
-  //   Await.result(ref, timeout.duration).asInstanceOf[ActorRef]
+  //   Await.result(ref, 1.minute).asInstanceOf[ActorRef]
   // }
+
+  // simulate blocking RPC: finite duration is required so make it long
+  implicit val timeout = Timeout(8 hours)  // time limit to return Future from call
 
   /** Send the given message to the server and block until response comes back. */
   private def callServer (request: ProcessorCoreCommand): ProcessorCoreReply = {
-    val response = router ? request         // call returning Future
-    val result = Await.result(response, timeout.duration)
+    val response = router ? request         // call returns Future within long timeout
+    val result = Await.result(response, Duration.Inf) // blocking: wait forever
     if (result.isInstanceOf[ServerExceptionMsg]) {
       val exception = result.asInstanceOf[ServerExceptionMsg].exception
       throw new RuntimeException(exception.getMessage())
