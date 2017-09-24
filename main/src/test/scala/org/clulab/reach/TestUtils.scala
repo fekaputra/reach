@@ -1,14 +1,16 @@
 package org.clulab.reach
 
-import io.Source
-import org.clulab.reach.mentions._
-import org.clulab.odin._
-import org.clulab.processors.Document
-import scala.util.Try
-import ai.lum.nxmlreader.{NxmlDocument, NxmlReader}
-import org.clulab.reach.utils.MentionManager
 import java.io.File
 
+import io.Source
+import scala.util.Try
+
+import ai.lum.nxmlreader.{NxmlDocument, NxmlReader}
+import org.clulab.odin._
+import org.clulab.processors.Document
+import org.clulab.processors.coserver.ProcessorCoreServer
+import org.clulab.reach.mentions._
+import org.clulab.reach.utils.MentionManager
 
 /**
  * Utility methods for the tests in this directory
@@ -57,7 +59,8 @@ object TestUtils {
 
   val testReach = PaperReader.reachSystem // All tests should use this system!
   val testReader = new NxmlReader
-  val bioproc = testReach.processor // quick access to a processor, if needed.
+  // quick access to the currently configured processor:
+  val bioproc = ProcessorCoreServer.instance.processor
   val docId = "testdoc"
   val chunkId = "1"
   val mentionManager = new MentionManager()

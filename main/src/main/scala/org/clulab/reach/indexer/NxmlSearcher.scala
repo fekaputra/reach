@@ -16,7 +16,6 @@ import org.apache.lucene.search.{TopScoreDocCollector, IndexSearcher}
 import org.apache.lucene.store.FSDirectory
 import org.slf4j.LoggerFactory
 
-import org.clulab.reach.coserver.ProcessorCoreClient
 import org.clulab.utils.StringUtils
 import NxmlSearcher._
 
@@ -25,13 +24,11 @@ import NxmlSearcher._
   * Searches the NXML index created by NXML indexer
   * User: mihais
   * Date: 10/19/15
-  * Last Modified: Update for processors core server.
+  * Last Modified: Remove unused processor core client.
   */
 class NxmlSearcher(val indexDir:String) {
   val reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDir)))
   val searcher = new IndexSearcher(reader)
-  // The next variable does not seem to be used anywhere
-  // val processor = new ProcessorCoreClient   // default is BioNLP processor
 
   def close() = reader.close()
 

@@ -24,7 +24,7 @@ import NxmlIndexer._
   * Indexes a bunch of NXML files so we can run quick searches wo/ grep :)
   * User: mihais
   * Date: 10/19/15
-  * Last Modified: Update for processors core server.
+  * Last Modified: Update for processor core client instance.
   */
 class NxmlIndexer {
   def index(docsDir:String, mapFile:String, indexDir:String): Unit = {
@@ -53,7 +53,7 @@ class NxmlIndexer {
     val config = new IndexWriterConfig(analyzer)
     val index = FSDirectory.open(Paths.get(indexDir))
     val writer = new IndexWriter(index, config)
-    val processor = new ProcessorCoreClient // default is BioNLP processor
+    val processor = ProcessorCoreClient.instance // default is BioNLP processor
     count = 0
     var nxmlErrors = 0
     for (file <- files) {

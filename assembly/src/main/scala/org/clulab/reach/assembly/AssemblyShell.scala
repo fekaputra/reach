@@ -1,18 +1,20 @@
 package org.clulab.reach.assembly
 
 import java.io.File
-import com.typesafe.config.ConfigFactory
-import org.clulab.reach.context.ContextEngineFactory.Engine
-import scala.collection.immutable.ListMap
 import jline.console.ConsoleReader
 import jline.console.history.FileHistory
+
+import scala.collection.immutable.ListMap
+import com.typesafe.config.ConfigFactory
+
+import org.clulab.reach.context.ContextEngineFactory.Engine
+import org.clulab.reach.coserver.ProcessorCoreClient
 import org.clulab.reach.display._
 import org.clulab.reach.{context, ReachSystem}
 import org.clulab.reach.assembly.display._
 
-
 object AssemblyShell extends App {
-  println("Loading ReachSystem ...")
+  println("Loading Reach ...")
 
   val config = ConfigFactory.load()
 
@@ -22,10 +24,10 @@ object AssemblyShell extends App {
   val contextEngineParams: Map[String, String] = context.createContextEngineParams(contextConfig)
 
   // initialize ReachSystem with appropriate context engine
-  var reach = new ReachSystem(contextEngineType = contextEngineType,
-    contextParams = contextEngineParams)
-
-  val proc = reach.processor
+  val processor = ProcessorCoreClient.instance
+  var reach = new ReachSystem(processor = processor,
+                              contextEngineType = contextEngineType,
+                              contextParams = contextEngineParams)
 
   val history = new FileHistory(new File(System.getProperty("user.home"), ".assemblyshellhistory"))
   sys addShutdownHook {
@@ -63,7 +65,7 @@ object AssemblyShell extends App {
         println("reloading rules ...")
         try {
           val rules = reload()
-          reach = new ReachSystem(Some(rules), Some(proc))
+          reach = new ReachSystem(rules=Some(rules), processor=processor)
           println("successfully reloaded rules")
         } catch {
           case e: Throwable => println(s"error reloading: ${e.getMessage}")
@@ -91,8 +93,8 @@ object AssemblyShell extends App {
   reader.getTerminal().restore()
   reader.shutdown()
 
-
-  // functions
+  // tell the core client to shutdown the core server
+  processor.shutdown
 
   def printCommands(): Unit = {
     println("\nCOMMANDS:")

@@ -10,7 +10,7 @@ class TestEntities extends FlatSpec with Matchers {
   // test data
   val text = "The ubiquitinated Ras protein phosphorylates AKT."
 
-  "ReachSystem" should "extract mentions from FriesEntry" in {
+  "Reach" should "extract mentions from FriesEntry" in {
     val entry = FriesEntry(docId, chunkId, "example", "example", isTitle = false, text)
     val result = Try(testReach.extractFrom(entry))
     result.isSuccess should be (true)
@@ -22,20 +22,20 @@ class TestEntities extends FlatSpec with Matchers {
   }
 
   it should "extract mentions from document" in {
-    val doc = testReach.processor.annotate(text, keepText = true)
+    val doc = bioproc.annotate(text, keepText = true)
     doc.id = Some(docId)
     val result = Try(testReach.extractFrom(doc))
     result.isSuccess should be (true)
   }
 
   it should "not extract mentions from document without id" in {
-    val doc = testReach.processor.annotate(text, keepText = true)
+    val doc = bioproc.annotate(text, keepText = true)
     val result = Try(testReach.extractFrom(doc))
     result.isSuccess should be (false)
   }
 
   it should "not extract mentions from document without original text" in {
-    val doc = testReach.processor.annotate(text, keepText = false)
+    val doc = bioproc.annotate(text, keepText = false)
     doc.id = Some(docId)
     val result = Try(testReach.extractFrom(doc))
     result.isSuccess should be (false)

@@ -1,18 +1,18 @@
 package org.clulab.reach.export.apis
 
 import java.util.{List => JList}
-import com.typesafe.config.ConfigFactory
-import org.clulab.reach._
-import org.clulab.reach.mentions._
-import ai.lum.nxmlreader._
 import scala.collection.JavaConverters._
-
+import com.typesafe.config.ConfigFactory
+import ai.lum.nxmlreader._
+import org.clulab.reach._
+import org.clulab.reach.coserver.ProcessorCoreClient
+import org.clulab.reach.mentions._
 
 /**
   * External interface class to accept and process text strings and NXML documents,
   * returning Reach results as a sequence of BioMentions.
   *   Author: Tom Hicks. 10/19/2015.
-  *   Last Modified: Import all of ai.lum.nxmlreader.
+  *   Last Modified: Update for processor core client instance.
   */
 object Api {
   // Reach results for Scala consumption are a sequence of BioMentions
@@ -33,7 +33,7 @@ object Api {
 
   val reader = new NxmlReader(ignoreSections.toSet)
 
-  val reach = new ReachSystem               // start reach system
+  val reach = new ReachSystem(processor=ProcessorCoreClient.instance) // start reach system
 
   //
   // Scala API

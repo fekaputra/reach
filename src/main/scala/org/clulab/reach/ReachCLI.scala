@@ -16,6 +16,8 @@ import ai.lum.common.ConfigUtils._
 import org.clulab.odin._
 import org.clulab.reach.assembly._
 import org.clulab.reach.assembly.export.{ AssemblyExporter, AssemblyRow, ExportFilters }
+import org.clulab.reach.coserver.ProcessorCoreClient
+// import org.clulab.reach.coserver.ProcessorCoreClient._
 import org.clulab.reach.export.OutputDegrader
 import org.clulab.reach.export.arizona.ArizonaOutputter
 import org.clulab.reach.export.cmu.CMUExporter
@@ -319,4 +321,7 @@ object RunReachCLI extends App with LazyLogging {
   )
   cli.processPapers(Some(threadLimit), withAssembly)
 
+  // shutdown the core server inside the reach system
+  logger.info(s"ReachCLI: Reach system shutting down...")
+  ProcessorCoreClient.shutdown
 }

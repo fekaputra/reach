@@ -16,6 +16,7 @@ import ai.lum.common.FileUtils._
 import org.clulab.odin._
 import org.clulab.reach.context.ContextEngineFactory.Engine
 import org.clulab.reach.coserver.ProcessorCoreClient
+// import org.clulab.reach.coserver.ProcessorCoreClient._
 import org.clulab.reach.utils.DSVParser
 import org.clulab.utils.Serializer
 
@@ -40,13 +41,13 @@ object PaperReader extends LazyLogging {
     context.createContextEngineParams(contextConfig)
 
   // initialize ReachSystem with appropriate context engine
-  lazy val reachSystem = new ReachSystem(pcc = Some(new ProcessorCoreClient),
+  val processor = ProcessorCoreClient.instance
+  lazy val reachSystem = new ReachSystem(processor = processor,
                                          contextEngineType = contextEngineType,
                                          contextParams = contextEngineParams)
 
   // systems for reading papers
-  val nxmlReader = new NxmlReader(ignoreSections.toSet,
-                                  transformText=reachSystem.processor.preprocessText)
+  val nxmlReader = new NxmlReader(ignoreSections.toSet, transformText=processor.preprocessText)
   val dsvReader = new DSVParser()
 
 

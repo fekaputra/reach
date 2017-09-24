@@ -21,7 +21,7 @@ import RuleReader.{Rules, readResource}
 
 class ReachSystem(
   rules: Option[Rules] = None,
-  pcc: Option[ProcessorCoreClient] = None,
+  processor: ProcessorCoreClient,
   contextEngineType: Engine = Dummy,
   contextParams: Map[String, String] = Map()
 ) extends LazyLogging {
@@ -45,8 +45,8 @@ class ReachSystem(
   // start event extraction engine
   // this engine extracts simple and recursive events and applies coreference
   val eventEngine = ExtractorEngine(eventRules, actions, actions.cleanupEvents)
-  // initialize processor
-  val processor = if (pcc.nonEmpty) pcc.get else new ProcessorCoreClient
+
+  // do first dummy annotation to initialize processor
   processor.annotate("something")
 
   /** returns string with all rules used by the system */
@@ -293,17 +293,5 @@ object ReachSystem extends LazyLogging {
       }
     }
   }
-
-  // def chooseProcessor(procType:String):Processor = {
-  //   val proc = procType.toLowerCase match {
-  //     case "fastbionlp" =>
-  //       logger.info("Choosing FastBio processor")
-  //       new FastBioNLPProcessor(withChunks = false)
-  //     case _ =>
-  //       logger.info("Choosing Bio processor")
-  //       new BioNLPProcessor(withChunks = false)
-  //   }
-  //   proc
-  // }
 
 }

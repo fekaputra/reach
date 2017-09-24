@@ -1,12 +1,16 @@
 package org.clulab.reach
 
+import org.clulab.reach.coserver.ProcessorCoreClient
 import org.scalatest._
 import TestUtils._
 
 class TestInactiveRules extends FlatSpec with Matchers {
-  /**
-  // instantiate ReachSystem for tests
-  val reach = new ReachSystem
+
+/**
+
+  // instantiate Reach for tests
+  val processor = ProcessorCoreClient.instance
+  val reach = new ReachSystem(processor=processor)
 
   // test data
   val text = "The ubiquitinated Ras protein phosphorylates AKT."
@@ -17,14 +21,14 @@ class TestInactiveRules extends FlatSpec with Matchers {
     val text = "To test this hypothesis, we transiently transfected CHO-KI cells, which do not express ERBB receptors endogenously, with wildtype ERBB3 with either wild-type EGFR or EGFR T669A."
     val doc = reach.mkDoc(text, docId)
     val mentions = reach.extractEntitiesFrom(doc)
-    hasEntityWithSite("EGFR", "T669A", mentions) should be true
+    hasEntityWithSite("EGFR", "T669A", mentions) should be (true)
   }
 
   it should "find an entity with site" in {
     val text = "We observed analogous results in CHO-KI cells expressing wild-type ERBB3 in combination with wild-type or T677A mutant HER2 (Figure 6B)"
     val doc = reach.mkDoc(text, "testdoc")
     val mentions = reach.extractFrom(doc)
-    hasEntityWithSite("HER2", "T677A mutant", mentions) should be true
+    hasEntityWithSite("HER2", "T677A mutant", mentions) should be (true)
   }
 
   it should "find an entity with site" in {
@@ -32,8 +36,8 @@ class TestInactiveRules extends FlatSpec with Matchers {
     val doc = reach.mkDoc(text, docId)
     val mentions = reach.extractFrom(doc)
 
-    hasEntityWithSite("EGFR", "JM domains", mentions) should be true
-    hasEntityWithSite("HER2", "JM domains", mentions) should be true
+    hasEntityWithSite("EGFR", "JM domains", mentions) should be (true)
+    hasEntityWithSite("HER2", "JM domains", mentions) should be (true)
   }
 
   @Test def testDegradationDecl1() {
@@ -273,5 +277,6 @@ class TestInactiveRules extends FlatSpec with Matchers {
     }
   }
 
-  */
+*/
+
 }

@@ -1,23 +1,25 @@
 package org.clulab.reach.export.apis
 
 import java.util.{Date, Map => JMap}
+
+import scala.collection.JavaConverters._
 import com.typesafe.config.ConfigFactory
+
+import ai.lum.nxmlreader._
 import org.clulab.odin.Mention
 import org.clulab.reach._
+import org.clulab.reach.coserver.ProcessorCoreClient
 import org.clulab.reach.export.arizona.ArizonaOutputter
 import org.clulab.reach.export.cmu.CMUExporter
 import org.clulab.reach.export.fries.FriesOutput
 import org.clulab.reach.export.indexcards.IndexCardOutput
 import org.clulab.reach.export.serial.SerialJsonOutput
 import org.clulab.reach.utils.IncrementingId
-import ai.lum.nxmlreader._
-import scala.collection.JavaConverters._
-
 
 /**
   * External interface class to accept and process text strings and NXML documents,
   * returning REACH results in either FRIES or IndexCard JSON format.
-  *   Last modified: Add CMU output format.
+  *   Last Modified: Update for processor core client instance.
   */
 object ApiRuler {
   // a response is a heterogeneous Java Map from String to either String or Boolean
@@ -37,7 +39,7 @@ object ApiRuler {
 
   val reader = new NxmlReader(ignoreSections.toSet)
 
-  val reach = new ReachSystem               // start reach system
+  val reach = new ReachSystem(processor=ProcessorCoreClient.instance) // start reach system
 
   val friesOutputter = new FriesOutput         // converts results to JSON in FRIES format
   val indexCardOutputter = new IndexCardOutput // converts results to JSON in Index Card format

@@ -10,7 +10,7 @@ import org.clulab.processors.Document
 /**
   * Tests of the ProcessorCoreClient.
   *   Written by: Tom Hicks. 6/20/2017.
-  *   Last Modified: Update for use of BioNLP.
+  *   Last Modified: Update for processor core client instance.
   */
 class TestProcessorCoreClient extends FlatSpec with Matchers with LazyLogging {
 
@@ -19,7 +19,7 @@ class TestProcessorCoreClient extends FlatSpec with Matchers with LazyLogging {
   logger.debug(s"(TestProcessorCoreClient): config=${config}")
 
   // create a processor core server instance
-  val client = new ProcessorCoreClient
+  val client = ProcessorCoreClient.instance
   logger.debug(s"(TestProcessorCoreClient): client=${client}")
 
   "ProcessorCoreClient" should "not be null" in {

@@ -673,7 +673,7 @@ class TestDeModifications extends FlatSpec with Matchers {
 
   val sent1 = "The dephosphorylated AKT binds to ASPP2."
   val sent1b = "The deubiquitinated AKT binds to ASPP2."
-  "ReachSystem" should "not find a PTMs as events" in {
+  "Reach" should "not find a PTMs as events" in {
     var mentions = getBioMentions(sent1)
     val p = mentions.find(_ matches "Dephosphorylation")
     p.isDefined should be (false) // Dane

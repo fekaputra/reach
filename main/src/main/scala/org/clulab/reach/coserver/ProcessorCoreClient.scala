@@ -9,6 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 
 import akka.actor._
 import akka.pattern.ask
+import akka.routing.Broadcast
 import akka.util.Timeout
 
 import org.clulab.processors._
@@ -18,12 +19,37 @@ import org.clulab.processors.coserver.ProcessorCoreServerMessages._
 /**
   * Reach client for the Processors Core Server.
   *   Written by: Tom Hicks. 6/9/2017.
-  *   Last Modified: Replace user-specified timeout, simulate blocking.
+  *   Last Modified: Add companion object, alter class ctor, expose class shutdown method.
   */
-class ProcessorCoreClient extends LazyLogging {
+object ProcessorCoreClient extends LazyLogging {
 
-  // load application configuration from the configuration file
-  private val config = ConfigFactory.load().getConfig("ProcessorCoreClient")
+  // THE instance of the the processor core client
+  private var _pcc: ProcessorCoreClient = _
+
+  /** Create a single instance of the processor core client, only if it has not been created. */
+  def instance: ProcessorCoreClient = {
+    logger.debug(s"(ProcessorCoreClient.instance): pcc = ${_pcc}")
+    if (_pcc == null) {                     // create client, iff not already created
+      val config = ConfigFactory.load().getConfig("ProcessorCoreClient")
+      if (config == null)
+        throw new RuntimeException("(ProcessorCoreClient): Unable to read configuration from configuration file.")
+      _pcc = new ProcessorCoreClient(config)
+    }
+    logger.debug(s"(ProcessorCoreClient.instance): pcc => ${_pcc}")
+    _pcc
+  }
+
+  /** Expose the shutdown method from the instance. */
+  def shutdown: Unit = instance.shutdown
+}
+
+
+class ProcessorCoreClient (
+
+  /** Application-specific portion of the configuration file. */
+  val config: Config
+
+) extends LazyLogging {
 
   // // read actor system name from the configuration file
   // private val systemName = if (config.hasPath("server.systemName"))
@@ -60,6 +86,15 @@ class ProcessorCoreClient extends LazyLogging {
     }
     else
       result.asInstanceOf[ProcessorCoreReply]
+  }
+
+  /** Send the core server a message to shutdown actors and terminate the actor system. */
+  def shutdown: Unit = {
+    if (config.getBoolean("shutdownServerOnExit")) {
+      router ! Broadcast(PoisonPill)
+      // following only needed/possible when core server and client running in same JVM.
+      ProcessorCoreServer.shutdown          // terminate the server actor system
+    }
   }
 
 

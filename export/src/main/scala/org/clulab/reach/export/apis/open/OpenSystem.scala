@@ -8,14 +8,12 @@ import scala.util.Try
 
 /**
   * Create a new Open Domain system engine.
-  *   Last Modified: Redo to use processor core client.
+  *   Last Modified: Update for processor core client instance.
   */
 class OpenSystem (pcc: Option[ProcessorCoreClient] = None) {
 
   // Use processor core client to connect to the processor core server
-  val client: ProcessorCoreClient =
-    if (pcc.nonEmpty) pcc.get
-    else new ProcessorCoreClient
+  val client: ProcessorCoreClient = if (pcc.nonEmpty) pcc.get else ProcessorCoreClient.instance
 
   // For the demo, Ruler will provide us with our rules
   var cachedRules: String = ""
